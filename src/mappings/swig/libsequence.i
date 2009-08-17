@@ -118,10 +118,11 @@
 #%rename(__aref__) Sequence::Seq::operator[];
 #%ignore boost::noncopyable;
 #%rename(__getitem__) Sequence::PolyTable::operator[];
+#%rename(functor) Sequence::ProductMoment::operator();
 %template(strPair) std::pair<std::string, std::string>;
 %template(unsignedPair) std::pair<unsigned, unsigned>;
 %template() std::pair<unsigned, Sequence::shortestPath::pathType>;
-%template() std::pair<std::vector<double>::iterator, double>;
+%template(wdIterPair) std::pair<std::vector<double>::iterator, double>;
 %template(polymorphicSites) std::pair< double, std::string >;
 %template(polySiteVector) std::vector< std::pair< double, std::string > >;
 %template(gametes) std::pair< std::vector<double>, std::vector<std::string> >;
@@ -142,7 +143,7 @@ void gametes_set(std::pair< std::vector<double>, std::vector<std::string> > *gam
 
 %inline %{
 
-std::pair< std::vector<double>, std::vector<std::string> > * gametesPointer(std::pair< std::vector<double>, std::vector<std::string> > gametes){
+std::pair< std::vector<double>, std::vector<std::string> > * GetgametesPointer(std::pair< std::vector<double>, std::vector<std::string> > gametes){
 
      return &gametes;
 }
@@ -171,6 +172,7 @@ std::pair< std::vector<double>, std::vector<std::string> > * gametesPointer(std:
 %ignore Sequence::newick_stream_marginal_tree_impl::newick_stream_marginal_tree_impl( const marginal * m );
 %rename(sfs_assgin) Sequence::sfs_times::operator=;
 %rename(sfs_ref) Sequence::sfs_times::operator[];
+#%rename(funcall) Sequence::upperCrit::operator();
 #%rename(AA) Sequence::Alignment::IsAlignment<std::string>;
 %ignore Sequence::pick2( const uniform_generator & uni, const int & nsam);
 %ignore Sequence::pick2_in_deme( const uniform_generator & uni, 
@@ -242,6 +244,8 @@ std::pair< std::vector<double>, std::vector<std::string> > * gametesPointer(std:
 				std::vector<chromosome>::const_iterator sample_begin,
 				const unsigned & current_nsam,
 				const double * rec_map);
+
+%ignore Sequence::PermuteCorrelation;
                         
 /*#define BOOST_STATIC_ASSERT( B ) \
    typedef ::boost::static_assert_test<\
@@ -328,7 +332,7 @@ typedef std::vector< polymorphicSite > polySiteVector;
 #%include <Sequence/FastaExplicit.hpp>
 #%include <Sequence/Coalescent/bits/Coalesce.tcc>
 %include <Sequence/Coalescent/bits/Mutation.tcc>
-#%include <Sequence/bits/Correlations.tcc>
+%include <Sequence/bits/Correlations.tcc>
 %include <Sequence/Coalescent/bits/DemographicModels.tcc>
 
 
@@ -350,7 +354,10 @@ typedef std::vector< polymorphicSite > polySiteVector;
 %template(nodeVector) std::vector<Sequence::node>;
 %template(chroVector) std::vector<Sequence::chromosome>;
 %template(hkaVector) std::vector<Sequence::HKAdata>;
-#%template(Polyassign) Sequence::PolyTable::assign<double, std::string>;
+
+%template(assignPolySites) Sequence::PolySites::assign<double, std::string>;
+%template(assignSimData) Sequence::SimData::assign<double, std::string>;
+%template(assignSimpleSNP) Sequence::SimpleSNP::assign<double, std::string>;
 
 
 /*namespace Sequence
@@ -407,8 +414,11 @@ std::pair<std::string, std::string> * strPairPointer(std::pair<std::string, std:
 %template(validForPolyAnalysis_Fasta) Sequence::Alignment::validForPolyAnalysis< std::vector< Sequence::Fasta >::iterator>; 
 
 #%template(GetData_strPair) Sequence::Alignment::GetData<  std::pair< std::string, std::string> >;
+%template(GetData_Fasta) Sequence::Alignment::GetData<  Sequence::Fasta >;
 
+#%template(ReadNObjects_strPair) Sequence::Alignment::ReadNObjects< std::pair< std::string, std::string> >;
 
+%template(ReadNObjects_Fasta) Sequence::Alignment::ReadNObjects< Sequence::Fasta >;
 
 
 
@@ -422,9 +432,23 @@ std::pair<std::string, std::string> * strPairPointer(std::pair<std::string, std:
 
 
 
+/*%inline %{
+  double * GetdoublePointer(double x){
+      return &x;
+}
 
+  std::string * GetstrPointer(std::string y){
+      return &y;
+}
 
+%}
 
+%inline %{
+  Sequence::PolySites * GetPolySitesPointer(Sequence::PolySites data){
+      return &data;
+}
+
+%}*/
 
 
 
@@ -473,6 +497,8 @@ if ((SWIG_ConvertPtr($input, (void **) &$1, $1_descriptor, SWIG_POINTER_EXCEPTIO
 %template(pick_spot) Sequence::pick_spot<Sequence::gsl_uniform01>;
 %template(neutral_sample) Sequence::neutral_sample< Sequence::gsl_uniform, Sequence::gsl_uniform01, Sequence::gsl_exponential, Sequence::gsl_poisson>;
 
+
+
 %template(preferFloatingTypes_double) Sequence::preferFloatingTypes<int,double>;
 %template(ensureFloating_double) Sequence::ensureFloating<int, double>;
 
@@ -480,12 +506,13 @@ if ((SWIG_ConvertPtr($input, (void **) &$1, $1_descriptor, SWIG_POINTER_EXCEPTIO
     %template(__funcall__) operator() < std::vector<int>::iterator, std::vector<double>::iterator >;
 };*/
 
-#%template(funcall) Sequence::ProductMoment::operator()< std::vector<int>::iterator, std::vector<double>::iterator >;
+
+#%template(__call__) Sequence::ProductMoment::funcall< std::vector<int>::iterator, std::vector<double>::iterator >;
 
 
+%template(__call__) Sequence::upperCrit::funcall<std::vector<double>::iterator>; 
 
-
-
+%template(__call__) Sequence::lowerCrit::funcall<std::vector<double>::iterator>;
 
 
 

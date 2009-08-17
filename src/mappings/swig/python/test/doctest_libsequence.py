@@ -2374,6 +2374,7 @@ def Testget_all_descendants():
 def Testis_descendant():
     """Ask if a tip of a tree is a descendant of a particular branch.
 
+    is_descendant(beg,ind,branch)
     Parameters:
     beg 	A pointer to the beginning of a marginal tree, i.e. the return value of
     marginal::begin()
@@ -2394,6 +2395,7 @@ def Testis_descendant():
 def Testpick2():
     """Returns:A pair of integers which contains the indexes of two chromosomes in sample
 
+    pick2(uni,nsam)
     Parameters:
     uni 	a random number function/object capable of returning a double-precision random number between 0 and nsam-1
     nsam 	the current sample size in the simulation
@@ -2860,7 +2862,7 @@ class TestSimData(object):
         >>> pos[3] = .44
         >>> dat = strVector(2)
         >>> dat[0] = 'A-TC'
-        >>> dat[1] = 'NEG1'
+        >>> dat[1] = 'N0G1'
         >>> d = SimData(pos,dat)
         >>> d.numsites()
         4
@@ -3004,6 +3006,24 @@ class TestPolySites():
         >>> end = p.send()
         >>> p1 = PolySites(beg,end)
         """
+
+    def testassign():
+        """Returns: true if the assignment was successful, false otherwise. The only case
+        where false is returned is if the number of individuals at each site is not the
+        constan from beg to end.
+
+        >>> v = fastaVector(2)
+        >>> v[0] = Fasta('s1','ATGCG')
+        >>> v[1] = Fasta('s2','CG-TT')
+        >>> p = PolySites(v)
+        >>> beg = p.sbegin()
+        >>> end = p.send()
+        >>> p1 = PolySites()
+        >>> p1.assign(beg,end)
+        True
+        """
+
+        
     def testdes_PolySites():
         """Destructor
 
@@ -3034,7 +3054,17 @@ class TestPolySites():
         >>> p.GetPositions()
         (3.0, 4.0, 7.0)
         """
+    def testposition():
+        """Return the i-th position from the PolyTable::positions.
 
+        >>> v = fastaVector(2)
+        >>> v[0] = Fasta('s1', 'ANTGC-C')
+        >>> v[1] = Fasta('s2', '-GGTCCA')
+        >>> p = PolySites(v)
+        >>> p.position(2)
+        7.0
+        """
+        
     def testApplyFreqFilter():
         """go through the data and remove all positions where there is a variant at count
         (# of occurences in the sample) < minfreq
@@ -3105,6 +3135,41 @@ class TestPolySites():
         >>> data = PolySites(v)
         >>> data.numsites()
         3
+        """
+
+    def testoperator_equal():
+        """Returns true if two SimData object are the same, otherwise false
+
+        >>> v = fastaVector(2)
+        >>> v[0] = Fasta('s1', 'ANTGC-C')
+        >>> v[1] = Fasta('s2', '-GGTCCA')
+        >>> p = PolySites(v)
+        >>> p1 = PolySites(v)
+        >>> p == p1
+        True
+        """
+
+
+    
+
+    def testoperator_notequal():
+        """Returns False if two SimData object are the same, otherwise True
+
+        >>> p = PolySites()
+        >>> p1 = PolySites()
+        >>> p != p1
+        False
+        """
+
+    def testoperator_reference():
+        """Return the i-th element of PolyTable::data.
+
+        >>> v = fastaVector(2)
+        >>> v[0] = Fasta('s1', 'ANTGC-C')
+        >>> v[1] = Fasta('s2', '-GGTCCA')
+        >>> p = PolySites(v)
+        >>> p[0]
+        'TGC'
         """
 def TestrotatePolyTable():
     """Rotate a polymorphism table into a vector of pairs, where the pairs are of type
@@ -4231,6 +4296,41 @@ def TestmeanAndVar():
     >>> meanAndVar(x.begin(),x.end())
     (6.2666666666666666, 36.843333333333327)
     """
+class TestupperCrit(object):
+
+    
+    """Find the upper critical value of a sorted list.
+
+    operator() (BwdIter beg, BwdIter end, double alpha=0.95)
+    BwdIter is a type of std::vector<double>::iterator here
+    >>> up = upperCrit()
+    >>> x = doubleVector(4)
+    >>> x[0] = 0.6
+    >>> x[1] = 10.7
+    >>> x[2] = 34.8
+    >>> x[3] = 58.2
+    >>> p = up(x.begin(),x.end())
+    >>> p[1]
+    1.0
+    """
+
+class TestlowerCrit(object):
+
+    """Find the lower critical value of a sorted list.
+
+    operator() (BwdIter beg, BwdIter end, double alpha=0.95)
+    BwdIter is a type of std::vector<double>::iterator here
+    >>> low = lowerCrit()
+    >>> x = doubleVector(4)
+    >>> x[0] = 0.6
+    >>> x[1] = 10.7
+    >>> x[2] = 34.8
+    >>> x[3] = 58.2
+    >>> p = low(x.begin(),x.end())
+    >>> p[1]
+    0.0
+    """
+
 
 
 ######################################################################

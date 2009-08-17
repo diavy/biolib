@@ -25,7 +25,7 @@
 %template(intVector) std::vector<int>;
 %template(doubleVector) std::vector<double>;
 %template(charVector) std::vector<char*>;
-%template() std::vector< std::vector<double> >;
+%template(snnVector) std::vector< std::vector<double> >;
 %template(fragVector) std::vector< std::pair<int, int> >;
 %template(scaleVector) std::vector< std::pair<double, double> >;
 %template(strVector) std::vector<std::string>;
@@ -94,6 +94,7 @@
   #include <Sequence/RNG/gsl_rng_wrappers.hpp>
   #include <gsl/gsl_rng.h>
   #include <Sequence/FastaExplicit.hpp>
+  #include <Sequence/Snn.hpp>
 %}
 
 #typedef unsigned int Sequence::Seq::size_type;
@@ -245,7 +246,20 @@ std::pair< std::vector<double>, std::vector<std::string> > * GetgametesPointer(s
 				const unsigned & current_nsam,
 				const double * rec_map);
 
+%ignore Sequence:: Snn_test(const PolyTable & snpTable,
+	   const unsigned config[],
+	   const size_t & npop,
+	   const uniform_int_generator & uni_int,
+	   const unsigned & nperms = 10000);
+%ignore Sequence:: Snn_test_pairwise(const PolyTable & snpTable,
+		    const unsigned config[],
+		    const size_t & npop,
+		    const uniform_int_generator & uni_int,
+		    const unsigned & nperms = 10000);
+
+
 %ignore Sequence::PermuteCorrelation;
+
                         
 /*#define BOOST_STATIC_ASSERT( B ) \
    typedef ::boost::static_assert_test<\
@@ -259,6 +273,26 @@ typedef std::pair< double, std::string > polymorphicSite;
 typedef std::vector< polymorphicSite > polySiteVector;
 //}
 
+%inline %{
+
+namespace Sequence
+{
+  class gsl_uniform_int
+  {
+  private:
+    gsl_rng * __r;
+  public:
+    gsl_uniform_int( gsl_rng * r ) : __r(r)
+    {
+    }
+    inline double operator()( unsigned long int n) const
+    {
+      return gsl_rng_uniform_int(__r, n);
+    }
+  };
+}
+
+%}
 
 %include <Sequence/Seq.hpp>
 %include <Sequence/Fasta.hpp>
@@ -334,6 +368,8 @@ typedef std::vector< polymorphicSite > polySiteVector;
 %include <Sequence/Coalescent/bits/Mutation.tcc>
 %include <Sequence/bits/Correlations.tcc>
 %include <Sequence/Coalescent/bits/DemographicModels.tcc>
+%include <Sequence/bits/Snn.tcc>
+%include <Sequence/Snn.hpp>
 
 
 %template(Gapped) Sequence::Gapped<std::string::iterator>;
@@ -419,6 +455,16 @@ std::pair<std::string, std::string> * strPairPointer(std::pair<std::string, std:
 #%template(ReadNObjects_strPair) Sequence::Alignment::ReadNObjects< std::pair< std::string, std::string> >;
 
 %template(ReadNObjects_Fasta) Sequence::Alignment::ReadNObjects< Sequence::Fasta >;
+
+
+%template(Snn_test) Sequence::Snn_test<Sequence::gsl_uniform_int>;
+%template(Snn_test_pairwise) Sequence::Snn_test_pairwise<Sequence::gsl_uniform_int>;
+
+
+
+
+
+
 
 
 

@@ -2935,12 +2935,12 @@ class TestSimData(object):
         Returns:an integer that is the the return value from fscanf, so that you can
         check for EOF
 
-        >>> f = open("simdata.txt","r")
+        >>> f = open("../../../../test/data/simdata/simdata.txt","r")
         >>> d = SimData()
         >>> d.fromfile(f)
         1
         >>> d.GetPositions()
-        (0.25, 0.32000000000000001)
+        (0.25, 0.32000000000000001, 0.34000000000000002, 0.44)
         """
 
 
@@ -4247,7 +4247,42 @@ class TestPolyTableSlice_PolySites(object):
         >>> p.size()
         2
         """
+def TestSnn_test():
+    """Conducts a permutation-test of Hudson's Snn (sequence nearest-neighbor) statistic.
+    Returns:A pair of doubles (std::pair<double,double>). the first member of the pair is
+    the observed value of the statistic, and the second member is the estimated p-value
 
+    Snn_test(snpTable,config,npop,uni_int,nperms)
+    Parameters:
+    snpTable 	The data on which we wish to perform the test.
+
+    config 	An array of the sample sizes in each deme.
+
+    npop 	The number of populations. For example, npop could equal config.size() if
+    config were a vector
+
+    uni_int 	A random number generator whose operator() takes one argument, n, and returns
+    a value uniformly-distributed on the half-open interval [0,N)
+
+    nperms 	The number of permutations to do for the test
+
+    >>> v = fastaVector(2)
+    >>> v[0] = Fasta('s1','ANTGC-C')
+    >>> v[1] = Fasta('s2','-GGTCCA')
+    >>> p = PolySites(v)
+    >>> config = unsignedArray(4)
+    >>> config[0] = 100
+    >>> config[1] = 105
+    >>> config[2] = 200
+    >>> config[3] = 85
+    >>> npop = 4
+    >>> T = gsl_rng_env_setup()
+    >>> r = gsl_rng_alloc(T)
+    >>> gsl_rng_set(r,0)
+    >>> uni_int = gsl_uniform_int(r)
+    >>> Snn_test(p,config,npop,uni_int)
+    (1.0, 1.0)
+    """
 
 ######################################################################
 ########################## 6. Statics ################################

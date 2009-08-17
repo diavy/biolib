@@ -1,6 +1,5 @@
 //
-setsites:2
-positions: 0.25 0.32
-01
-11
-
+segsites: 4
+positions: 0.25 0.32 0.34 0.44
+A-TC
+N0G1

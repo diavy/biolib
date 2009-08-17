@@ -1,0 +1,5 @@
+CLUSTAL W
+
+s1	ATGGC
+s2	CC-TT
+

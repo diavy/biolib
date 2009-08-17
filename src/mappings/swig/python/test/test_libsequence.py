@@ -125,9 +125,22 @@ snp.read(fh)
 ########output###########
 print "Next print out the SimpleSNP data:\n"
 snp._print(cout)
+print "\n\n"
+
+#########################Alignment Data#########################
+print "Read all Fasta data from external file!"
+data = fastaVector()
+GetData_Fasta(data, "../../../../test/data/fasta/example.fasta")
+print data[0].GetName()
+print data[1].GetName()
+print data[2].GetName()
 print
 
-
-
+print "Read the first two Fasta data from external file!"
+data1 = fastaVector()
+infile = ifstream("../../../../test/data/fasta/example.fasta")
+ReadNObjects_Fasta(data1, 2, infile)
+print data1[0].GetName()
+print data1[1].GetName()
 
 
